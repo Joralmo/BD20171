@@ -4,7 +4,7 @@ require 'flight/Flight.php';
 require 'clases/iniciarSesion.php';
 require 'clases/estudiante.php';
 require 'clases/profesor.php';
-require 'clases/Profesor.php';
+require 'clases/materia.php';
 Flight::set('flight.views.path', 'admin');
 Flight::route('GET /', function(){
 	session_start();
@@ -65,6 +65,19 @@ Flight::route('GET /adminProfesor', function(){
 		$datos=$_SESSION['todo'];
 		if($_SESSION['rol']=="Admin"){
 			Flight::render('profesor/nuevoProfesor');
+		}else{
+			Flight::render('../error');
+		}
+	}else{
+		Flight::render('../error');
+	}
+});
+Flight::route('GET /adminMaterias', function(){
+	session_start();
+	if(isset($_SESSION['usuario'])){
+		$datos=$_SESSION['todo'];
+		if($_SESSION['rol']=="Admin"){
+			Flight::render('materia/nuevaMateria');
 		}else{
 			Flight::render('../error');
 		}
@@ -186,6 +199,33 @@ Flight::route('POST /eliminarProfesor', function(){
 	echo $profesor->getRespuesta();
 });
 //End Profesor
+
+//Materia
+Flight::route('POST /nuevaMateria', function(){
+	$datos=$_POST["data"];
+	$materia=new Materia();
+	$materia->nuevaMateria($datos, $materia);
+	echo $materia->getRespuesta();
+});
+Flight::route('POST /verMaterias', function(){
+	$materia=new Materia();
+	$materia->verTodas($materia);
+	echo json_encode($materia->getRespuesta());
+});
+Flight::route('POST /editarMateria', function(){
+	$datos=$_POST["data"];
+	$id=$_POST["idMateria"];
+	$materia=new Materia();
+	$materia->actualizar($datos, $id, $materia);
+	echo $materia->getRespuesta();
+});
+Flight::route('POST /eliminarMateria', function(){
+	$id=$_POST["id"];
+	$materia=new Materia();
+	$materia->eliminar($id, $materia);
+	echo $materia->getRespuesta();
+});
+//End Materia
 
 Flight::route('GET /logout', function(){
 	session_start();

@@ -302,4 +302,117 @@ jQuery(document).ready(function($) {
 	//End Ver, Actualizar y Eliminar
 	
 	//End Profesores
+
+	//Materias
+	btnNuMateria=$("#crearMateria");
+	btnVerMaterias=$("#VerMaterias");
+	//Nueva
+	btnNuMateria.click(function(event) {
+		var data = new FormData($("#nuevoMateria")[0]);
+		$.ajax({
+			url: 'nuevaMateria',
+			type: 'POST',
+			data:data,
+			contentType: false,
+			processData: false,
+			success: function(datos){
+				if(datos!=0){
+					swal('Bien!', 'Materia agregada', 'success');
+				}else{
+					swal('Error!', 'Materia no agregada', 'error');
+				}
+			}
+		})
+	});
+	//End Nueva
+	//Ver, Actualizar y Eliminar
+	tablaMaterias=$("#bodyVerMaterias");
+	btnVerMaterias.click(function(e){
+		$.ajax({
+			url: 'verMaterias',
+			type: 'POST',
+			contentType: false,
+			processData: false,
+			success: function(datos)
+			{
+				// tablaVer.append('<tr><td>'+estudiante.codigo+'</td><td>'+estudiante.nombre+' '+estudiante.apellido+'</td><td>'+estudiante.carrera+'</td></tr>');
+				json=$.parseJSON(datos);
+				for(materia of json){
+					tablaMaterias.append('<tr><td>'+materia["Nombre"]+'</td><td>'+materia["IntesidadHoraria"]+'<td><a class="btn btn-info" name="Editar" id="'+materia["idMaterias"]+'"><i class="material-icons">create</i></a></td><td><a class="btn btn-danger" name="Eliminar" id="'+materia["idMaterias"]+'"><i class="material-icons">clear</i></a></td></tr>');
+				}
+			}
+		});
+	});
+	tablaMaterias.on("click", 'td', function(){
+		nombreC=$(this).siblings('td').eq(0).html();
+		Ih=$(this).siblings('td').eq(1).html();
+		var idEnUso=$(this).find('a').attr('id');
+		form=	'<form id="editarMateria">'+
+		'<label class="control-label">Nombre</label><input value="'+nombreC+'" name="data[Nombre]" required="" type="text" class="form-control">'+
+		'<label class="control-label">Apellido</label><input value="'+Ih+'" name="data[IntesidadHoraria]" required="" type="text" class="form-control">'+
+		'</form>';
+		if($(this).find('a').attr('name')=="Eliminar"){
+			id=$(this).find('a').attr('id');
+			$.post('eliminarMateria',{id:id},function(msg){
+				console.log(msg);
+				if(msg>0){
+					swal({
+						type: 'success',
+						title: 'Bien',
+						html: "Materia Eliminada"
+					});
+					ocultar=$("#cerrarVerTodos");
+					ocultar.trigger('click');
+					tablaMaterias.html(null);
+				}
+			});
+		}else if($(this).find('a').attr('name')=="Editar"){
+			var nombre, Ih;
+			swal({
+				title: 'Editar Materia '+nombre,
+				html: form,
+				showCancelButton: true,
+				confirmButtonText: 'Actualizar',
+				showLoaderOnConfirm: true,
+				preConfirm: function () {
+					return new Promise(function (resolve, reject) {
+						setTimeout(function() {
+							nombre=$("#editarMateria > input").eq(0);
+							Ih=$("#editarMateria > input").eq(1);
+							if(nombre.val().length>0 && Ih.val().length>0){
+								resolve()
+							}else{
+								reject('Por favor rellene todos los campos.');
+							}
+							
+						}, 1000)
+					})
+				},
+				allowOutsideClick: false
+			}).then(function () {
+				var data=new FormData($("#editarMateria")[0]);
+				data.append("idMateria", idEnUso);
+				$.ajax({
+					url: 'editarMateria',
+					type: 'POST',
+					data:data,
+					contentType: false,
+					processData: false,
+					success: function(datos)
+					{	console.log(datos)
+						swal({
+							type: 'success',
+							title: 'Actualizado',
+							html: nombre.val()+' '+Ih.val()
+						});
+						ocultar=$("#cerrarVerTodos");
+						ocultar.trigger('click');
+						tablaMaterias.html(null);
+					}
+				});
+			})
+		}
+	});
+	//End Ver, Actualizar y Eliminar
+	//End Materias
 });
