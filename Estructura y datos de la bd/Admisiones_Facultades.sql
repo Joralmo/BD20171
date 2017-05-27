@@ -26,7 +26,7 @@ CREATE TABLE `Facultades` (
   `idFactultad` int(10) NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(255) NOT NULL,
   PRIMARY KEY (`idFactultad`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35,7 +35,7 @@ CREATE TABLE `Facultades` (
 
 LOCK TABLES `Facultades` WRITE;
 /*!40000 ALTER TABLE `Facultades` DISABLE KEYS */;
-INSERT INTO `Facultades` VALUES (1,'Ingenieria'),(2,'Salud'),(3,'Educacion'),(4,'Empresariales');
+INSERT INTO `Facultades` VALUES (1,'Ingenieria'),(2,'Salud'),(3,'Educacion'),(4,'Empresariales'),(6,'Nueva Facultad');
 /*!40000 ALTER TABLE `Facultades` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -48,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-05-25 19:45:42
+-- Dump completed on 2017-05-27 11:51:23
