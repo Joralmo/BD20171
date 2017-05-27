@@ -415,4 +415,131 @@ jQuery(document).ready(function($) {
 	});
 	//End Ver, Actualizar y Eliminar
 	//End Materias
+
+	//Facultades
+	//Nueva Facultad
+	btnNuFacultad=$("#btnNuevaFacultad");
+	btnVerFactultades=$("#VerFacultades");
+	btnNuFacultad.click(function(event) {
+		swal({
+			title: 'Aregar nueva facultad',
+			input: 'text',
+			showCancelButton: true,
+			confirmButtonText: 'Guardar',
+			showLoaderOnConfirm: true,
+			preConfirm: function (text) {
+				return new Promise(function (resolve, reject) {
+					setTimeout(function() {
+						$.post('buscarFacultad', {nombre:text}, function(msg){
+							if ($.parseJSON(msg)[0]==text){
+								reject('Esta facultad ya existe')
+							} else {
+								$.post('nuevaFacultad',{nombre:text}, function(msg){
+									if(msg!=0){
+										resolve()
+									}
+								});
+							}
+						});
+					}, 2000)
+				})
+			},
+			allowOutsideClick: false
+		}).then(function (text) {
+			swal({
+				type: 'success',
+				title: 'Bien!',
+				html: 'Facultad agregada: ' + text
+			})
+		})
+	});
+	//End Nueva Facultad
+
+	//Ver, Actualizar y Eliminar
+	tablaFacultades=$("#bodyVerFacultades");
+	btnVerFactultades.click(function(e){
+		$.ajax({
+			url: 'verFacutades',
+			type: 'POST',
+			contentType: false,
+			processData: false,
+			success: function(datos)
+			{
+				// tablaVer.append('<tr><td>'+estudiante.codigo+'</td><td>'+estudiante.nombre+' '+estudiante.apellido+'</td><td>'+estudiante.carrera+'</td></tr>');
+				json=$.parseJSON(datos);
+				for(facultad of json){
+					tablaFacultades.append('<tr><td>'+facultad["descripcion"]+'</td><td><a class="btn btn-info" name="Editar" id="'+facultad["idFactultad"]+'"><i class="material-icons">create</i></a></td><td><a class="btn btn-danger" name="Eliminar" id="'+facultad["idFactultad"]+'"><i class="material-icons">clear</i></a></td></tr>');
+				}
+			}
+		});
+	});
+	tablaFacultades.on("click", 'td', function(){
+		var nombreC=$(this).siblings('td').eq(0).html();
+		var idEnUso=$(this).find('a').attr('id');
+		form=	'<form id="editarFacultad">'+
+		'<label class="control-label">Nombre</label><input value="'+nombreC+'" name="data[descripcion]" required="" type="text" class="form-control">'+
+		'</form>';
+		if($(this).find('a').attr('name')=="Eliminar"){
+			id=$(this).find('a').attr('id');
+			$.post('eliminarFacultad',{id:id},function(msg){
+				console.log(msg);
+				if(msg>0){
+					swal({
+						type: 'success',
+						title: 'Bien',
+						html: "Materia Eliminada"
+					});
+					ocultar=$("#cerrarVerTodos");
+					ocultar.trigger('click');
+					tablaMaterias.html(null);
+				}
+			});
+		}else if($(this).find('a').attr('name')=="Editar"){
+			var nombre;
+			swal({
+				title: 'Editar Materia '+nombreC,
+				html: form,
+				showCancelButton: true,
+				confirmButtonText: 'Actualizar',
+				showLoaderOnConfirm: true,
+				preConfirm: function () {
+					return new Promise(function (resolve, reject) {
+						setTimeout(function() {
+							nombre=$("#editarFacultad > input").eq(0);
+							if(nombre.val().length>0){
+								resolve()
+							}else{
+								reject('Por favor rellene todos los campos.');
+							}
+							
+						}, 1000)
+					})
+				},
+				allowOutsideClick: false
+			}).then(function () {
+				var data=new FormData($("#editarFacultad")[0]);
+				data.append("idFacultad", idEnUso);
+				$.ajax({
+					url: 'editarFacultad',
+					type: 'POST',
+					data:data,
+					contentType: false,
+					processData: false,
+					success: function(datos)
+					{	console.log(datos)
+						swal({
+							type: 'success',
+							title: 'Actualizado',
+							html: nombre.val()
+						});
+						ocultar=$("#cerrarVerTodos");
+						ocultar.trigger('click');
+						tablaMaterias.html(null);
+					}
+				});
+			})
+		}
+	});
+	//End Ver, Actualizar y Eliminar
+	//End Facultades
 });

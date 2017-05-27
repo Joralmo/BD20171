@@ -5,6 +5,7 @@ require 'clases/iniciarSesion.php';
 require 'clases/estudiante.php';
 require 'clases/profesor.php';
 require 'clases/materia.php';
+require 'clases/facultad.php';
 Flight::set('flight.views.path', 'admin');
 Flight::route('GET /', function(){
 	session_start();
@@ -78,6 +79,19 @@ Flight::route('GET /adminMaterias', function(){
 		$datos=$_SESSION['todo'];
 		if($_SESSION['rol']=="Admin"){
 			Flight::render('materia/nuevaMateria');
+		}else{
+			Flight::render('../error');
+		}
+	}else{
+		Flight::render('../error');
+	}
+});
+Flight::route('GET /adminFacultad', function(){
+	session_start();
+	if(isset($_SESSION['usuario'])){
+		$datos=$_SESSION['todo'];
+		if($_SESSION['rol']=="Admin"){
+			Flight::render('facultad/nuevaFacultad');
 		}else{
 			Flight::render('../error');
 		}
@@ -226,6 +240,40 @@ Flight::route('POST /eliminarMateria', function(){
 	echo $materia->getRespuesta();
 });
 //End Materia
+
+//Facultad
+Flight::route('POST /buscarFacultad', function(){
+	$nombre=$_POST["nombre"];
+	$facultad=new Facultad();
+	$facultad->buscarFacultad($nombre, $facultad);
+	echo $facultad->getRespuesta();
+});
+Flight::route('POST /nuevaFacultad', function(){
+	$nombre=$_POST["nombre"];
+	$facultad=new Facultad();
+	$facultad->nuevaFacultad($nombre, $facultad);
+	echo $facultad->getRespuesta();
+});
+Flight::route('POST /verFacutades', function(){
+	$facultad=new Facultad();
+	$facultad->verTodas($facultad);
+	echo json_encode($facultad->getRespuesta());
+});
+Flight::route('POST /eliminarFacultad', function(){
+	$id=$_POST["id"];
+	$facultad=new Facultad();
+	$facultad->eliminar($id, $facultad);
+	echo $facultad->getRespuesta();
+});
+Flight::route('POST /editarFacultad', function(){
+	$nombre=$_POST["data"];
+	var_dump($nombre);
+	$id=$_POST["idFacultad"];
+	$facultad=new Facultad();
+	$facultad->actualizar($nombre, $id, $facultad);
+	echo $facultad->getRespuesta();
+});
+//End Facultad
 
 Flight::route('GET /logout', function(){
 	session_start();

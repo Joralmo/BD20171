@@ -37,6 +37,7 @@
 	<div class="botonesModal">
 		<a href="adminEstudiante" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Nuevo">Estudiantes</a>
 		<a href="adminProfesor" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Actual">Profesores</a>
+		<a href="adminMaterias" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Actual">Materias</a>
 	</div>
 </body>
 </html>
